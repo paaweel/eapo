@@ -5,11 +5,9 @@ from gym.wrappers.time_limit import TimeLimit
 from stable_baselines3 import HER, SAC
 
 class Model:
-    def __init__(self, paramters = {}):
-        """
-        docstring
-        """
+    """ Helper class for interactions with gym """
 
+    def __init__(self, paramters = {}):
         self.paramters = paramters
         self.env = TimeLimit(gym.make('PepperPush-v0'), max_episode_steps=100)
 
@@ -37,6 +35,7 @@ class Model:
     def learn(self, iterations: int):
         self.model.learn(iterations)
 
+
     def evaluate(self):
         test_env = TimeLimit(gym.make('PepperPush-v0'), max_episode_steps=100)
 
@@ -49,6 +48,7 @@ class Model:
                 obs = test_env.reset()
     
         return reward
+
 
     def save(self, path="./data/0"):
         self.model.save()
