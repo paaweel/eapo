@@ -38,7 +38,17 @@ class Model:
         self.model.learn(iterations)
 
     def evaluate(self):
-        return 200
+        test_env = TimeLimit(gym.make('PepperPush-v0'), max_episode_steps=100)
+
+        obs = test_env.reset()
+        for _ in range(1000):
+            action, _ = self.model.predict(obs, deterministic=True)
+            obs, reward, done, _ = test_env.step(action)
+
+            if done:
+                obs = test_env.reset()
+    
+        return reward
 
     def save(self, path="./data/0"):
         self.model.save()

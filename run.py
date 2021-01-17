@@ -39,7 +39,6 @@ def random_individual(ctor) -> dict:
 
     return ind
 
-
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", dict, fitness=creator.FitnessMax)
 
@@ -47,7 +46,6 @@ toolbox = base.Toolbox()
 toolbox.register("individual", random_individual, creator.Individual)
 # define the population to be a list of individuals
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
 
 #----------
 # Operator registration
