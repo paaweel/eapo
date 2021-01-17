@@ -4,30 +4,35 @@ from deap import base
 from deap import creator
 from deap import tools
 
+from operators import crossover_op, mutate_op, evaluateModel
+
 def random_individual(ctor) -> dict:
     """
         Brief: 
             Returns random individual
 
         Note:
-            bool(random.getrandbits(1)) seems to be the fastest way of
-            getting random bool value
+            - Algorithm will not break if some of the params are not set
+                Model class will use its own defaults
+
+            - bool(random.getrandbits(1)) seems to be the fastest way of
+                getting random bool value
 
     """
     paramters = {}
 
-    paramters["n_timesteps"] = random.randrange(1000, 30000)
-    # paramters["policy"] = 'MlpPolicy'
-    # paramters["model_class"] = 'sac'
-    paramters["n_sampled_goal"] = random.randrange(1, 5)
-    # paramters["goal_selection_strategy"] = 'future'
-    paramters["buffer_size"] = random.randrange(1000, 30000)
-    # paramters["ent_coef"] = 'auto'
-    paramters["batch_size"] = random.randrange(1, 4096)
-    paramters["gamma"] = random.uniform(0, 1)
-    paramters["learning_rate"] = random.uniform(0, 1)
-    paramters["learning_starts"] = random.uniform(0, 1)
-    paramters["online_sampling"] = bool(random.getrandbits(1))
+    # paramters["n_timesteps"] = random.randrange(1000, 30000)
+    # # paramters["policy"] = 'MlpPolicy'
+    # # paramters["model_class"] = 'sac'
+    # paramters["n_sampled_goal"] = random.randrange(1, 5)
+    # # paramters["goal_selection_strategy"] = 'future'
+    # paramters["buffer_size"] = random.randrange(1000, 30000)
+    # # paramters["ent_coef"] = 'auto'
+    # paramters["batch_size"] = random.randrange(1, 4096)
+    # paramters["gamma"] = random.uniform(0, 1)
+    # paramters["learning_rate"] = random.uniform(0, 1)
+    # paramters["learning_starts"] = random.uniform(0, 1)
+    # paramters["online_sampling"] = bool(random.getrandbits(1))
     paramters["normalize"] = bool(random.getrandbits(1))
 
     ind = ctor(paramters)
@@ -39,52 +44,22 @@ creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", dict, fitness=creator.FitnessMax)
 
 toolbox = base.Toolbox()
-
-# Attribute generator 
-#                      define 'attr_bool' to be an attribute ('gene')
-#                      which corresponds to integers sampled uniformly
-#                      from the range [0,1] (i.e. 0 or 1 with equal
-#                      probability)
-# toolbox.register("attr_params", random.randint, 0, 1)
-
-# Structure initializers
-#                         define 'individual' to be an individual
-#                         consisting of 100 'attr_bool' elements ('genes')
 toolbox.register("individual", random_individual, creator.Individual)
-
 # define the population to be a list of individuals
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-# the goal ('fitness') function to be maximized
-def evalOneMax(individual):
-    return sum(individual.values()),
 
 #----------
 # Operator registration
 #----------
-# register the goal / fitness function
-toolbox.register("evaluate", evalOneMax)
-
-def crossover_op(ind1, ind2):
-    return ind1
-
-# register the crossover operator
+toolbox.register("evaluate", evaluateModel)
 toolbox.register("mate", crossover_op)
-
-def mutate_op(ind1):
-    return ind1
-
-
-# register a mutation operator with a probability to
-# flip each attribute/gene of 0.05 
 toolbox.register("mutate", mutate_op)
-
 # operator for selecting individuals for breeding the next
 # generation: each individual of the current generation
 # is replaced by the 'fittest' (best) of three individuals
 # drawn randomly from the current generation.
 toolbox.register("select", tools.selTournament, tournsize=3)
-
 #----------
 
 def main():

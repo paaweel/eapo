@@ -37,6 +37,8 @@ class Model:
     def learn(self, iterations: int):
         self.model.learn(iterations)
 
+    def evaluate(self):
+        return 200
 
     def save(self, path="./data/0"):
         self.model.save()
