@@ -4,24 +4,7 @@ from deap import base
 from deap import creator
 from deap import tools
 
-
-# # SAC hyperparams
-# FetchReach-v1:
-#   n_timesteps: !!float 20000
-#   policy: 'MlpPolicy'
-#   model_class: 'sac'
-#   n_sampled_goal: 4
-#   goal_selection_strategy: 'future'
-#   buffer_size: 1000000
-#   ent_coef: 'auto'
-#   batch_size: 256
-#   gamma: 0.95
-#   learning_rate: 0.001
-#   learning_starts: 1000
-#   online_sampling: True
-#   normalize: True
-
-def random_individual() -> dict:
+def random_individual(ctor) -> dict:
     """
         Brief: 
             Returns random individual
@@ -31,24 +14,25 @@ def random_individual() -> dict:
             getting random bool value
 
     """
-    random_ind = {}
-    random_ind["n_timesteps"] = random.randrange(1000, 30000)
-    random_ind["policy"] = 'MlpPolicy'
-    random_ind["model_class"] = 'sac'
-    random_ind["n_sampled_goal"] = random.randrange(1, 5)
-    random_ind["goal_selection_strategy"] = 'future'
-    random_ind["buffer_size"] = random.randrange(1000, 30000)
-    random_ind["ent_coef"] = 'auto'
-    random_ind["batch_size"] = random.randrange(1, 4096)
-    random_ind["gamma"] = random.uniform(0, 1)
-    random_ind["learning_rate"] = random.uniform(0, 1)
-    random_ind["learning_starts"] = random.uniform(0, 1)
+    paramters = {}
 
-    # booleans
-    random_ind["online_sampling"] = bool(random.getrandbits(1))
-    random_ind["normalize"] = bool(random.getrandbits(1))
+    paramters["n_timesteps"] = random.randrange(1000, 30000)
+    # paramters["policy"] = 'MlpPolicy'
+    # paramters["model_class"] = 'sac'
+    paramters["n_sampled_goal"] = random.randrange(1, 5)
+    # paramters["goal_selection_strategy"] = 'future'
+    paramters["buffer_size"] = random.randrange(1000, 30000)
+    # paramters["ent_coef"] = 'auto'
+    paramters["batch_size"] = random.randrange(1, 4096)
+    paramters["gamma"] = random.uniform(0, 1)
+    paramters["learning_rate"] = random.uniform(0, 1)
+    paramters["learning_starts"] = random.uniform(0, 1)
+    paramters["online_sampling"] = bool(random.getrandbits(1))
+    paramters["normalize"] = bool(random.getrandbits(1))
 
-    return random_ind
+    ind = ctor(paramters)
+
+    return ind
 
 
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -61,20 +45,19 @@ toolbox = base.Toolbox()
 #                      which corresponds to integers sampled uniformly
 #                      from the range [0,1] (i.e. 0 or 1 with equal
 #                      probability)
-toolbox.register("attr_bool", random.randint, 0, 1)
+# toolbox.register("attr_params", random.randint, 0, 1)
 
 # Structure initializers
 #                         define 'individual' to be an individual
 #                         consisting of 100 'attr_bool' elements ('genes')
-toolbox.register("individual", tools.initRepeat, creator.Individual, 
-    toolbox.attr_bool, 100)
+toolbox.register("individual", random_individual, creator.Individual)
 
 # define the population to be a list of individuals
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 # the goal ('fitness') function to be maximized
 def evalOneMax(individual):
-    return sum(individual),
+    return sum(individual.values()),
 
 #----------
 # Operator registration
@@ -82,12 +65,19 @@ def evalOneMax(individual):
 # register the goal / fitness function
 toolbox.register("evaluate", evalOneMax)
 
+def crossover_op(ind1, ind2):
+    return ind1
+
 # register the crossover operator
-toolbox.register("mate", tools.cxTwoPoint)
+toolbox.register("mate", crossover_op)
+
+def mutate_op(ind1):
+    return ind1
+
 
 # register a mutation operator with a probability to
-# flip each attribute/gene of 0.05
-toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
+# flip each attribute/gene of 0.05 
+toolbox.register("mutate", mutate_op)
 
 # operator for selecting individuals for breeding the next
 # generation: each individual of the current generation
