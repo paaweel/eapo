@@ -3,6 +3,8 @@ import gym_pepper
 import torch as th
 from gym.wrappers.time_limit import TimeLimit
 from stable_baselines3 import HER, SAC
+from stable_baselines3.common.evaluation import evaluate_policy
+import statistics
 
 class Model:
     """ Helper class for interactions with gym """
@@ -35,20 +37,19 @@ class Model:
     def learn(self, iterations: int):
         self.model.learn(iterations)
 
-
     def evaluate(self):
-        test_env = TimeLimit(gym.make('PepperPush-v0'), max_episode_steps=100)
-
+        test_env = TimeLimit(
+            gym.make('PepperPush-v0'), max_episode_steps=100
+        )
         obs = test_env.reset()
-        for _ in range(1000):
-            action, _ = self.model.predict(obs, deterministic=True)
-            obs, reward, done, _ = test_env.step(action)
+        results = evaluate_policy(
+            self.model, 
+            test_env,
+            n_eval_episodes=100,
+            return_episode_rewards=False
+        )
 
-            if done:
-                obs = test_env.reset()
-    
-        return reward
-
+        return results[0]
 
     def save(self, path="./data/0"):
         self.model.save()
@@ -57,5 +58,6 @@ class Model:
 if __name__ == "__main__":
     model = Model()
     model.learn(100)
+    model.evaluate()
     
     
