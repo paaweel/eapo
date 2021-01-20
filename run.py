@@ -1,6 +1,7 @@
 import random
 
 from deap import base, creator, tools
+from scoop import futures
 
 from operators import crossover_op, mutate_op, evaluateModel, random_individual
 
@@ -12,6 +13,7 @@ toolbox.register("individual", random_individual, creator.Individual)
 # define the population to be a list of individuals
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
+toolbox.register("map", futures.map)
 #----------
 # Operator registration
 #----------
@@ -30,7 +32,7 @@ def main():
 
     # create an initial population of 300 individuals (where
     # each individual is a list of integers)
-    pop = toolbox.population(n=300)
+    pop = toolbox.population(n=20)
 
     # CXPB  is the probability with which two individuals
     #       are crossed
@@ -54,7 +56,7 @@ def main():
     g = 0
     
     # Begin the evolution
-    while max(fits) < 100 and g < 1000:
+    while max(fits) < 0.9 and g < 100:
         # A new generation
         g = g + 1
         print("-- Generation %i --" % g)
@@ -85,7 +87,7 @@ def main():
     
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = map(toolbox.evaluate, invalid_ind)
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
         
