@@ -23,7 +23,7 @@ class Model:
             buffer_size=paramters.get("buffer_size", 1000000),
             batch_size=paramters.get("batch_size", 256),
             learning_rate=paramters.get("learning_rate", 0.001),
-            learning_starts=paramters.get("learning_starts", 1000),
+            learning_starts=paramters.get("learning_starts", 500),
             n_sampled_goal=paramters.get("n_sampled_goal", 4),
             gamma=paramters.get("gamma", 0.95),
             goal_selection_strategy=paramters.get("goal_selection_strategy", 'future'),
