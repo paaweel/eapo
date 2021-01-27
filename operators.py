@@ -13,11 +13,12 @@ def bin2float(binary):
 
 
 def crossover_op(ind1, ind2):
+    better_ind = ind1 if ind1.fitness > ind2.fitness else ind2
     for key in ind1.keys():
         ind1[key] = ind1[key] + ind2[key]
         ind1[key] /= 2.0
 
-    return ind1
+    return ind1, better_ind
 
 
 def mutate_op(ind1):
