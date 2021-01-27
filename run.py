@@ -19,7 +19,7 @@ toolbox.register("map", futures.map)
 #----------
 toolbox.register("evaluate", evaluateModel)
 toolbox.register("mate", crossover_op)
-toolbox.register("mutate", mutate_op)
+toolbox.register("mutate", mutate_op, low={"gamma": 0, "learning_rate": 0}, up={"gamma": 1, "learning_rate": 1})
 # operator for selecting individuals for breeding the next
 # generation: each individual of the current generation
 # is replaced by the 'fittest' (best) of three individuals

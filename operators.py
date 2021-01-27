@@ -9,7 +9,7 @@ def float2bin(num):
 
 
 def bin2float(binary):
-    return struct.unpack('!f',struct.pack('!I', int(binary, 2)))[0]
+    return struct.unpack('!f', struct.pack('!I', int(binary, 2)))[0]
 
 
 def crossover_op(ind1, ind2):
@@ -21,13 +21,23 @@ def crossover_op(ind1, ind2):
     return ind1, better_ind
 
 
-def mutate_op(ind1):
-    choosen = random.choice(list(ind1.keys()))
-    binary_rep = list(float2bin(ind1[choosen]))
-    random_idx = random.randrange(len(binary_rep))
-    binary_rep[random_idx] = "1" if binary_rep[random_idx] == "0" else "1"
-    ind1[choosen] = bin2float("".join(binary_rep))
+def mutate_op(ind1, up, low):
+    number_of_params = random.randint(1, len(ind1))
+    # choosen = random.choice(list(ind1.keys()))
+    choosen_list = random.sample(list(ind1.keys()), number_of_params)
+    for choosen in choosen_list:
+        # binary_rep = list(float2bin(ind1[choosen]))
+        # random_idx = random.randrange(len(binary_rep))
+        # binary_rep[random_idx] = "1" if binary_rep[random_idx] == "0" else "1"
+        # ind1[choosen] = bin2float("".join(binary_rep))
+        percent_of_max_value = up[choosen] * 0.02  # 2% z max
+        temp = ind1[choosen] + percent_of_max_value
+        ind1[choosen] = clamp(temp, low[choosen], up[choosen])
     return ind1
+
+
+def clamp(n, minn, maxn):
+    return max(min(maxn, n), minn)
 
 
 # the goal ('fitness') function to be maximized
@@ -63,18 +73,18 @@ def random_individual(ctor) -> dict:
     # paramters["buffer_size"] = random.randrange(1000, 30000)S
     # # paramters["ent_coef"] = 'auto'
     # paramters["batch_size"] = random.randrange(1, 4096)
-    
-    
+
     # paramters["online_sampling"] = bool(random.getrandbits(1))
     # paramters["normalize"] = bool(random.getrandbits(1))
 
     return ctor(paramters)
 
 
-
 if __name__ == "__main__":
     def identity(x):
         return x
+
+
     i1 = random_individual(identity)
 
     print("mutation")
@@ -93,4 +103,3 @@ if __name__ == "__main__":
 
     print("Child")
     print(crossover_op(i1, i2))
-    
