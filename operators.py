@@ -31,7 +31,11 @@ def mutate_op(ind1, up, low):
         # binary_rep[random_idx] = "1" if binary_rep[random_idx] == "0" else "1"
         # ind1[choosen] = bin2float("".join(binary_rep))
         percent_of_max_value = up[choosen] * 0.02  # 2% z max
-        temp = ind1[choosen] + percent_of_max_value
+        operator = random.choice([True, False])
+        if operator == True:
+            temp = ind1[choosen] + percent_of_max_value
+        else:
+            temp = ind1[choosen] - percent_of_max_value
         ind1[choosen] = clamp(temp, low[choosen], up[choosen])
     return ind1
 
