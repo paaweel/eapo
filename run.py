@@ -32,7 +32,7 @@ def main():
 
     # create an initial population of 300 individuals (where
     # each individual is a list of integers)
-    pop = toolbox.population(n=20)
+    pop = toolbox.population(n=10)
 
     # CXPB  is the probability with which two individuals
     #       are crossed
@@ -56,7 +56,7 @@ def main():
     g = 0
     
     # Begin the evolution
-    while max(fits) < 0.9 and g < 100:
+    while max(fits) < 0.9 and g < 50:
         # A new generation
         g = g + 1
         print("-- Generation %i --" % g)
