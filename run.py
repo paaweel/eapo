@@ -29,7 +29,8 @@ toolbox.register("select", tools.selTournament, tournsize=3)
 
 def main():
     random.seed(64)
-
+    data = []
+    loggFile = "loggings.json"
     # create an initial population of 300 individuals (where
     # each individual is a list of integers)
     pop = toolbox.population(n=10)
@@ -108,6 +109,12 @@ def main():
         print("  Max %s" % max(fits))
         print("  Avg %s" % mean)
         print("  Std %s" % std)
+
+        best_ind_gen = tools.selBest(pop, 1)[0]
+
+        data.append({"generation": g, "parameters": best_ind_gen, "fitness": best_ind_gen.fitness.values})
+        with open(loggFile, 'w') as f:
+            json.dump(data, f)
     
     print("-- End of (successful) evolution --")
     
