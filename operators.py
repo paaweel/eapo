@@ -66,7 +66,7 @@ def random_individual(ctor) -> dict:
     """
     paramters = {}
     paramters["gamma"] = random.uniform(0, 1)
-    paramters["learning_rate"] = random.uniform(0, 1)
+    paramters["learning_rate"] = random.uniform(0.000001, 0.01)
 
     # paramters["learning_starts"] = 500 # random.randrange(100, 3000)
     # paramters["n_timesteps"] = random.randrange(1000, 3_000_000)
