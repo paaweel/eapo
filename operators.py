@@ -51,7 +51,7 @@ def evaluateModel(individual):
     return model.evaluate(),
 
 
-def random_individual(ctor) -> dict:
+def random_individual(ctor: callable) -> dict:
     """
         Brief: 
             Returns random individual

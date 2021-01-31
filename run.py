@@ -93,7 +93,7 @@ class Algorithm:
         self.pop = self.toolbox.population(n=12)
 
         # pbar = tqdm(range(50))
-        for generation_num in tqdm(range(50)):
+        for generation_num in tqdm(range(5000)):
             self.__generation()
             # pbar.set_description("Processing gen: %s" % generation_num)
 
@@ -132,6 +132,6 @@ class Algorithm:
         self.toolbox.register("select", tools.selTournament, tournsize=3)
 
 
+a = Algorithm()
 if __name__ == "__main__":
-    a = Algorithm()
     a.run()
