@@ -64,11 +64,11 @@ class Algorithm:
     def __evaluate_offspring(self, offspring):
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = self.toolbox.map(self.toolbox.evaluate, invalid_ind)
+        fitnesses = list(tqdm(self.toolbox.map(self.toolbox.evaluate, invalid_ind),
+            desc="Evaluation", total=len(invalid_ind)))
+
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
-
-        # print("  Evaluated %i individuals" % len(invalid_ind))
 
 
     def __get_offspring(self):
@@ -82,7 +82,7 @@ class Algorithm:
     def run(self):
         self.pop = self.toolbox.population(n=POPULATION)
 
-        for generation_num in tqdm(range(GEN_NUM)):
+        for generation_num in tqdm(range(GEN_NUM), desc="Generation", total=GEN_NUM):
             self.__generation()
             best_ind_gen = tools.selBest(self.pop, 1)[0]
             self.logger.log_generation(self.pop, best_ind_gen)
