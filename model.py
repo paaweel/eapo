@@ -22,7 +22,7 @@ class Model:
             self.env,
             SAC,
             online_sampling=paramters.get("online_sampling", False),
-            verbose=paramters.get("verbose", 1),
+            verbose=paramters.get("verbose", 0),
             max_episode_length=paramters.get("max_episode_length", 100),
             buffer_size=paramters.get("buffer_size", 1000000),
             batch_size=paramters.get("batch_size", 256),

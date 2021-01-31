@@ -1,10 +1,14 @@
 import json
+import os
 
 class Logger():
     def __init__(self):
         super().__init__()
 
         self.output_dir = "./data/"
+
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
 
         self.data = {
             "best_individual": {
@@ -15,7 +19,7 @@ class Logger():
         }
 
 
-    def save_to_file(self):
+    def save_to_file(self, filename="logs"):
         with open(self.output_dir + "logs.json", 'w') as f:
             json.dump(self.data, f, indent=4)
 
@@ -53,3 +57,8 @@ class Logger():
             "avg": mean,
             "std": std
         }
+
+
+if __name__ == "__main__":
+    Logger().save_to_file("test.json")
+    
