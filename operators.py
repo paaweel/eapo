@@ -47,7 +47,7 @@ def clamp(n, minn, maxn):
 # the goal ('fitness') function to be maximized
 def evaluateModel(individual):
     model = Model(individual)
-    model.learn(50_000)
+    model.learn(5)
     return model.evaluate(),
 
 

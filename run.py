@@ -5,10 +5,12 @@ from scoop import futures
 from functools import partial
 from tqdm import tqdm
 
-tqdm = partial(tqdm, position=0, leave=True)
 
 from operators import crossover_op, mutate_op, evaluateModel, random_individual
+from logger import Logger
 
+# force tqdm to use one line
+tqdm = partial(tqdm, position=0, leave=True) 
 
 SEED = 64
 CXPB, MUTPB = 0.5, 0.2
@@ -17,6 +19,8 @@ class Algorithm:
     def __init__(self, try_concurrent=True):
 
         random.seed(SEED)
+
+        self.logger = Logger()
 
         self.toolbox = base.Toolbox()
         self.__setup_individual()
@@ -90,14 +94,15 @@ class Algorithm:
 
     def run(self):
 
-        self.pop = self.toolbox.population(n=12)
+        self.pop = self.toolbox.population(n=2)
 
         # pbar = tqdm(range(50))
-        for generation_num in tqdm(range(5000)):
+        for generation_num in tqdm(range(2)):
             self.__generation()
-            # pbar.set_description("Processing gen: %s" % generation_num)
 
-            # best_ind_gen = tools.selBest(pop, 1)[0]
+            best_ind_gen = tools.selBest(self.pop, 1)[0]
+
+            self.logger.log_generation(self.pop, best_ind_gen)
 
             # data.append({"generation": g, "parameters": best_ind_gen, "fitness": best_ind_gen.fitness.values})
             # with open(loggFile, 'w') as f:
