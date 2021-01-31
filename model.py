@@ -12,6 +12,10 @@ class Model:
     def __init__(self, paramters = {}):
         self.paramters = paramters
         self.env = TimeLimit(gym.make('PepperPush-v0'), max_episode_steps=100)
+        
+        policy_kwargs = dict(activation_fn=th.nn.ReLU, net_arch=[256, 256, 256])
+        if "net_arch" in paramters:
+            policy_kwargs["net_arch"] = paramters["net_arch"]
 
         self.model = HER(
             paramters.get("policy",'MlpPolicy'),
@@ -28,7 +32,7 @@ class Model:
             gamma=paramters.get("gamma", 0.95),
             goal_selection_strategy=paramters.get("goal_selection_strategy", 'future'),
             ent_coef=paramters.get("ent_coef", 'auto'),
-            policy_kwargs = dict(activation_fn=th.nn.ReLU, net_arch=[256, 256, 256]),
+            policy_kwargs = policy_kwargs,
             train_freq=paramters.get("train_freq", 1),
             tensorboard_log=paramters.get("tensorboard_log", "./data/0_tensorboard/")
         )
@@ -45,7 +49,7 @@ class Model:
         results = evaluate_policy(
             self.model, 
             test_env,
-            n_eval_episodes=1,
+            n_eval_episodes=25,
             return_episode_rewards=False
         )
 

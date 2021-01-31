@@ -1,17 +1,11 @@
 import random
 import struct
+import math
+import torch as th
 
 from model import Model
 
-
-def float2bin(num):
-    return format(struct.unpack('!I', struct.pack('!f', num))[0], '032b')
-
-
-def bin2float(binary):
-    return struct.unpack('!f', struct.pack('!I', int(binary, 2)))[0]
-
-
+# --- crossover operators -------------------
 def crossover_op(ind1, ind2):
     better_ind = ind1 if ind1.fitness > ind2.fitness else ind2
     for key in ind1.keys():
@@ -19,35 +13,75 @@ def crossover_op(ind1, ind2):
         ind1[key] /= 2.0
 
     return ind1, better_ind
+    
 
+def cxTwoPoint_op(ind1, ind2):
+    """ Two point crossover on the input"""
+    size = len(ind1.keys())
+    cxpoint1 = random.randint(1, size)
+    cxpoint2 = random.randint(1, size - 1)
+
+    if cxpoint2 >= cxpoint1:
+        cxpoint2 += 1
+    else:  # Swap the two cx points
+        cxpoint1, cxpoint2 = cxpoint2, cxpoint1
+
+    for param in list(ind1.keys())[cxpoint1:cxpoint2]:
+        ind1[param] = ind2[param]
+
+    return ind1, ind2
+
+
+def cxOnePoint_op(ind1, ind2):
+    """ One point crossover on the input"""
+    size = min(len(ind1.keys()), len(ind2))
+    cxpoint = random.randint(1, size - 1)
+    lhs_params = list(ind1.keys())[:cxpoint]
+    rhs_params = list(ind1.keys())[cxpoint:]
+
+    for param in lhs_params:
+        ind1[param] = ind2[param]
+
+    for param in rhs_params:
+        ind2[param] = ind1[param]
+
+    return ind1, ind2
+
+# --- mutation operators -------------------
 
 def mutate_op(ind1, up, low):
     number_of_params = random.randint(1, len(ind1))
-    # choosen = random.choice(list(ind1.keys()))
     choosen_list = random.sample(list(ind1.keys()), number_of_params)
     for choosen in choosen_list:
-        # binary_rep = list(float2bin(ind1[choosen]))
-        # random_idx = random.randrange(len(binary_rep))
-        # binary_rep[random_idx] = "1" if binary_rep[random_idx] == "0" else "1"
-        # ind1[choosen] = bin2float("".join(binary_rep))
-        percent_of_max_value = up[choosen] * 0.02  # 2% z max
-        operator = random.choice([True, False])
-        if operator == True:
-            temp = ind1[choosen] + percent_of_max_value
+        if choosen == "net_arch":
+            ind1[choosen] = mutate_policy_kwargs(ind1[choosen])
         else:
-            temp = ind1[choosen] - percent_of_max_value
-        ind1[choosen] = clamp(temp, low[choosen], up[choosen])
+            percentage = 0.02
+            temp = ind1[choosen] * random.choice([1 - percentage, 1 + percentage])
+            ind1[choosen] = clamp(temp, low[choosen], up[choosen])
     return ind1
+
+def mutate_policy_kwargs(net_arch):
+    size = len(net_arch)
+    neurons = net_arch[0]
+
+    n_layers = clamp(size + random.choice([-1, 0, 1]), 1, 5)
+    width = math.log(neurons, 2)
+    width = clamp(width + random.choice([-1, 0, 1]), 6, 9) ** 2
+
+    net_arch = [int(width)] * n_layers
+
+    return net_arch
 
 
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
 
 
-# the goal ('fitness') function to be maximized
+# the goal ('fitness'), function to be maximized
 def evaluateModel(individual):
     model = Model(individual)
-    model.learn(5)
+    model.learn(50_000)
     return model.evaluate(),
 
 
@@ -67,6 +101,7 @@ def random_individual(ctor: callable) -> dict:
     paramters = {}
     paramters["gamma"] = random.uniform(0, 1)
     paramters["learning_rate"] = random.uniform(0.000001, 0.01)
+    paramters["net_arch"] = get_net_arch()
 
     # paramters["learning_starts"] = 500 # random.randrange(100, 3000)
     # paramters["n_timesteps"] = random.randrange(1000, 3_000_000)
@@ -82,6 +117,15 @@ def random_individual(ctor: callable) -> dict:
     # paramters["normalize"] = bool(random.getrandbits(1))
 
     return ctor(paramters)
+
+
+def get_net_arch():
+    """
+        https://stable-baselines.readthedocs.io/en/master/guide/custom_policy.html
+    """
+    n_layers = random.randint(1,5)
+    width = 2 ** random.randint(6, 9)
+    return [int(width)] * n_layers
 
 
 if __name__ == "__main__":

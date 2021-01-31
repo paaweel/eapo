@@ -6,13 +6,15 @@ from functools import partial
 from tqdm import tqdm
 
 
-from operators import crossover_op, mutate_op, evaluateModel, random_individual
+from operators import *
 from logger import Logger
 
 # force tqdm to use one line
 tqdm = partial(tqdm, position=0, leave=True) 
 
 SEED = 64
+GEN_NUM = 12
+POPULATION = 12
 CXPB, MUTPB = 0.5, 0.2
 
 class Algorithm:
@@ -77,36 +79,13 @@ class Algorithm:
         
         return offspring
 
-
-    def __log(self):
-        # Gather all the fitnesses in one list and print the stats
-        fits = [ind.fitness.values[0] for ind in pop]
-        length = len(pop)
-        mean = sum(fits) / length
-        sum2 = sum(x*x for x in fits)
-        std = abs(sum2 / length - mean**2)**0.5
-
-        print("  Min %s" % min(fits))
-        print("  Max %s" % max(fits))
-        print("  Avg %s" % mean)
-        print("  Std %s" % std)
-
-
     def run(self):
+        self.pop = self.toolbox.population(n=POPULATION)
 
-        self.pop = self.toolbox.population(n=2)
-
-        # pbar = tqdm(range(50))
-        for generation_num in tqdm(range(2)):
+        for generation_num in tqdm(range(GEN_NUM)):
             self.__generation()
-
             best_ind_gen = tools.selBest(self.pop, 1)[0]
-
             self.logger.log_generation(self.pop, best_ind_gen)
-
-            # data.append({"generation": g, "parameters": best_ind_gen, "fitness": best_ind_gen.fitness.values})
-            # with open(loggFile, 'w') as f:
-            #     json.dump(data, f)
 
         
     def __setup_individual(self):
@@ -118,7 +97,7 @@ class Algorithm:
 
     def __setup_operators(self):
         self.toolbox.register("evaluate", evaluateModel)
-        self.toolbox.register("mate", crossover_op)
+        self.toolbox.register("mate", cxTwoPoint_op)
         self.toolbox.register(
             "mutate", mutate_op, 
             low={
