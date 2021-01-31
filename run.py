@@ -101,7 +101,7 @@ class Algorithm:
         self.toolbox.register(
             "mutate", mutate_op, 
             low={
-                "gamma": 0,
+                "gamma": 0.9,
                 "learning_rate": 0
             }, 
             up={

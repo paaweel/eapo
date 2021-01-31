@@ -99,7 +99,7 @@ def random_individual(ctor: callable) -> dict:
 
     """
     paramters = {}
-    paramters["gamma"] = random.uniform(0, 1)
+    paramters["gamma"] = random.uniform(0.9, 1)
     paramters["learning_rate"] = random.uniform(0.000001, 0.01)
     paramters["net_arch"] = get_net_arch()
 
