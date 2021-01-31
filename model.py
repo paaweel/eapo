@@ -1,5 +1,6 @@
 import gym
 import gym_pepper
+import torch as th
 from gym.wrappers.time_limit import TimeLimit
 from stable_baselines3 import HER, SAC
 from stable_baselines3.common.evaluation import evaluate_policy
