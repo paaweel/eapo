@@ -102,11 +102,11 @@ class Algorithm:
             "mutate", mutate_op, 
             low={
                 "gamma": 0.9,
-                "learning_rate": 0
+                "learning_rate": 0.000001
             }, 
             up={
                 "gamma": 1,
-                "learning_rate": 1
+                "learning_rate": 0.01
             })
 
         # operator for selecting individuals for breeding the next
