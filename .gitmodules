@@ -1,0 +1,6 @@
+[submodule "gym_pepper"]
+	path = gym_pepper
+	url = https://github.com/lubiluk/gym-pepper
+[submodule "cembra2"]
+	path = cembra2
+	url = https://github.com/lubiluk/cembra2
