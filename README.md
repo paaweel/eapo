@@ -2,10 +2,8 @@
 
 ## Quick start
 
-- install requirements and download following repositories:
-  - Gym environment [lubiluk/gym-pepper](https://github.com/lubiluk/gym-pepper)
-  - RL algorithm [lubiluk/cembra2](https://github.com/lubiluk/cembra2)
-
+- install requirements
+- pull submodules
 - use python >=3.6
 - to run use:
 ```
