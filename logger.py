@@ -49,7 +49,7 @@ class Logger():
         length = len(population)
         mean = sum(fits) / length
         sum2 = sum(x*x for x in fits)
-        std = abs(sum2 / length - mean**2)**0.5
+        std = abs(sum2 / length - mean**2) ** 0.5
 
         return {
             "min": min(fits),

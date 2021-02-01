@@ -41,6 +41,7 @@ class Model:
     def learn(self, iterations: int):
         self.model.learn(iterations)
 
+
     def evaluate(self):
         test_env = TimeLimit(
             gym.make('PepperPush-v0'), max_episode_steps=100
@@ -49,11 +50,12 @@ class Model:
         results = evaluate_policy(
             self.model, 
             test_env,
-            n_eval_episodes=25,
+            n_eval_episodes=50,
             return_episode_rewards=False
         )
 
         return results[0]
+
 
     def save(self, path="./data/0"):
         self.model.save()
