@@ -13,8 +13,8 @@ from logger import Logger
 tqdm = partial(tqdm, position=0, leave=True) 
 
 SEED = 64
-GEN_NUM = 12
-POPULATION = 12
+GEN_NUM = 25
+POPULATION = 16
 CXPB, MUTPB = 0.5, 0.2
 
 class Algorithm:

@@ -50,7 +50,7 @@ class Model:
         results = evaluate_policy(
             self.model, 
             test_env,
-            n_eval_episodes=50,
+            n_eval_episodes=75,
             return_episode_rewards=False
         )
 
